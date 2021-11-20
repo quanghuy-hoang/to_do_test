@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:to_do/config/messanges.dart';
-import 'package:to_do/model/to_do.dart';
 import 'package:to_do/pages/home/home_provider.dart';
 import 'package:intl/intl.dart';
 
@@ -24,7 +23,7 @@ class Home extends ConsumerWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text("To Do"),
+        title: Text(Messages.appNameTitle),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -38,7 +37,7 @@ class Home extends ConsumerWidget {
             ref.read(homeProvider.notifier).addToDo(result);
           }
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
       body: ListView.builder(
         itemCount: toDoList.length,
@@ -84,7 +83,7 @@ class Home extends ConsumerWidget {
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
                   icon: Icons.edit,
-                  label: 'Edit',
+                  label: Messages.editTitle,
                 ),
                 SlidableAction(
                   onPressed: (context) {
@@ -95,7 +94,7 @@ class Home extends ConsumerWidget {
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                   icon: Icons.cancel,
-                  label: 'Delete',
+                  label: Messages.deleteTitle,
                 ),
               ],
             ),
@@ -136,7 +135,7 @@ class _AddForm extends ConsumerWidget {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: const Text("Cancel")),
+                      child: Text(Messages.cancelTitle)),
                 ),
               ),
               const SizedBox(width: 16),
