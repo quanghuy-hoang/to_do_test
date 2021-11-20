@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:to_do/config/custom_colors.dart';
 import 'package:to_do/config/messanges.dart';
 import 'package:to_do/pages/home/home_provider.dart';
 import 'package:intl/intl.dart';
@@ -14,10 +15,16 @@ class Home extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var toDoList = ref.watch(homeProvider).toDoList;
-    if (listType == ToDoListType.complete) {
-      toDoList = toDoList.where((element) => element.isDone).toList();
-    } else if (listType == ToDoListType.incomplete) {
-      toDoList = toDoList.where((element) => !element.isDone).toList();
+
+    switch (listType) {
+      case ToDoListType.complete:
+        toDoList = toDoList.where((element) => element.isDone).toList();
+        break;
+      case ToDoListType.incomplete:
+        toDoList = toDoList.where((element) => !element.isDone).toList();
+        break;
+      default:
+        break;
     }
 
     return Scaffold(
@@ -61,8 +68,6 @@ class Home extends ConsumerWidget {
               motion: const ScrollMotion(),
               children: [
                 SlidableAction(
-                  // An action can be bigger than the others.
-
                   onPressed: (context) async {
                     final result = await showModalBottomSheet(
                         isScrollControlled: true,
@@ -77,11 +82,8 @@ class Home extends ConsumerWidget {
                           .read(homeProvider.notifier)
                           .editToDoTask(toDoList[index], result);
                     }
-
-                    print(result);
                   },
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
+                  backgroundColor: CustomColors.editColor,
                   icon: Icons.edit,
                   label: Messages.editTitle,
                 ),
@@ -91,8 +93,7 @@ class Home extends ConsumerWidget {
                         .read(homeProvider.notifier)
                         .removeToDo(toDoList[index].createdAt);
                   },
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
+                  backgroundColor: CustomColors.deleteColor,
                   icon: Icons.cancel,
                   label: Messages.deleteTitle,
                 ),
@@ -117,8 +118,8 @@ class _AddForm extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(height: 56),
           TextFormField(
             keyboardType: TextInputType.multiline,
             maxLines: null,
@@ -126,7 +127,6 @@ class _AddForm extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Expanded(
                 child: SizedBox(
@@ -153,7 +153,8 @@ class _AddForm extends ConsumerWidget {
                 ),
               ),
             ],
-          )
+          ),
+          const SizedBox(height: 128),
         ],
       ),
     );
