@@ -32,20 +32,22 @@ class Home extends ConsumerWidget {
       appBar: AppBar(
         title: Text(Messages.appNameTitle),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context) {
-                return const _AddForm();
-              });
-          if (result != null && result is String) {
-            ref.read(homeProvider.notifier).addToDo(result);
-          }
-        },
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: listType != ToDoListType.complete
+          ? FloatingActionButton(
+              onPressed: () async {
+                final result = await showModalBottomSheet(
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (context) {
+                      return const _AddForm();
+                    });
+                if (result != null && result is String) {
+                  ref.read(homeProvider.notifier).addToDo(result);
+                }
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
       body: ListView.builder(
         itemCount: toDoList.length,
         itemBuilder: (context, index) {

@@ -12,7 +12,7 @@ class SharedPreferencesUtil {
 
   static final _sharedPreferences = SharedPreferences.getInstance();
 
-  final toDoKey = 'to_do_list';
+  static const toDoKey = 'to_do_list';
 
   Future<bool> setToDoList(List<ToDo> toDoList) {
     return _sharedPreferences.then((value) => value.setStringList(

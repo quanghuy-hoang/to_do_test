@@ -25,11 +25,11 @@ class Top extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.done), label: Messages.completeTitle),
+              icon: const Icon(Icons.done), label: Messages.completeTitle),
           BottomNavigationBarItem(
-              icon: Icon(Icons.home), label: Messages.homeTitle),
+              icon: const Icon(Icons.home), label: Messages.homeTitle),
           BottomNavigationBarItem(
-              icon: Icon(Icons.archive), label: Messages.incompleteTitle)
+              icon: const Icon(Icons.archive), label: Messages.incompleteTitle)
         ],
         currentIndex: currentIndex,
         onTap: ref.read(topProvider.notifier).changeCurrentIndex,
