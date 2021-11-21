@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:to_do/config/messanges.dart';
+import 'package:to_do/config/messages.dart';
 import 'package:to_do/pages/top_provider.dart';
 
 import 'home/home.dart';
@@ -25,11 +25,11 @@ class Top extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-              icon: const Icon(Icons.done), label: Messages.completeTitle),
+              icon: const Icon(Icons.done), label: Messages.completeNav),
           BottomNavigationBarItem(
-              icon: const Icon(Icons.home), label: Messages.homeTitle),
+              icon: const Icon(Icons.home), label: Messages.homeNav),
           BottomNavigationBarItem(
-              icon: const Icon(Icons.archive), label: Messages.incompleteTitle)
+              icon: const Icon(Icons.archive), label: Messages.incompleteNav)
         ],
         currentIndex: currentIndex,
         onTap: ref.read(topProvider.notifier).changeCurrentIndex,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:to_do/config/custom_colors.dart';
-import 'package:to_do/config/messanges.dart';
+import 'package:to_do/config/messages.dart';
 import 'package:to_do/pages/home/home_provider.dart';
 import 'package:intl/intl.dart';
 
@@ -11,6 +11,43 @@ enum ToDoListType { all, complete, incomplete }
 class Home extends ConsumerWidget {
   final ToDoListType listType;
   const Home({Key? key, this.listType = ToDoListType.all}) : super(key: key);
+
+  Future<String?> _showToDoEditingDialog(BuildContext context,
+      {String? title, String? confirmTitle, String initialText = ''}) {
+    final TextEditingController controller =
+        TextEditingController(text: initialText);
+    return showDialog<String?>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title ?? Messages.newToDo),
+          content: SingleChildScrollView(
+            child: TextFormField(
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              controller: controller,
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(Messages.cancel)),
+            const SizedBox(width: 16),
+            ElevatedButton(
+              onPressed: () {
+                if (controller.text.isNotEmpty) {
+                  Navigator.of(context).pop(controller.text);
+                }
+              },
+              child: Text(confirmTitle ?? Messages.add),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,17 +67,17 @@ class Home extends ConsumerWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        centerTitle: true,
         title: Text(Messages.appNameTitle),
       ),
       floatingActionButton: listType != ToDoListType.complete
           ? FloatingActionButton(
               onPressed: () async {
-                final result = await showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (context) {
-                      return const _AddForm();
-                    });
+                final result = await _showToDoEditingDialog(
+                  context,
+                  title: Messages.newToDo,
+                  confirmTitle: Messages.add,
+                );
                 if (result != null && result is String) {
                   ref.read(homeProvider.notifier).addToDo(result);
                 }
@@ -49,6 +86,7 @@ class Home extends ConsumerWidget {
             )
           : null,
       body: ListView.builder(
+        padding: const EdgeInsets.only(bottom: 56),
         itemCount: toDoList.length,
         itemBuilder: (context, index) {
           return Slidable(
@@ -71,14 +109,10 @@ class Home extends ConsumerWidget {
               children: [
                 SlidableAction(
                   onPressed: (context) async {
-                    final result = await showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return _AddForm(
-                            initialText: toDoList[index].task,
-                          );
-                        });
+                    final result = await _showToDoEditingDialog(context,
+                        title: Messages.edit,
+                        confirmTitle: Messages.confirm,
+                        initialText: toDoList[index].task);
                     if (result != null && result is String) {
                       ref
                           .read(homeProvider.notifier)
@@ -87,7 +121,7 @@ class Home extends ConsumerWidget {
                   },
                   backgroundColor: CustomColors.editColor,
                   icon: Icons.edit,
-                  label: Messages.editTitle,
+                  label: Messages.edit,
                 ),
                 SlidableAction(
                   onPressed: (context) {
@@ -97,67 +131,12 @@ class Home extends ConsumerWidget {
                   },
                   backgroundColor: CustomColors.deleteColor,
                   icon: Icons.cancel,
-                  label: Messages.deleteTitle,
+                  label: Messages.delete,
                 ),
               ],
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _AddForm extends ConsumerWidget {
-  final String initialText;
-
-  const _AddForm({Key? key, this.initialText = ''}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final TextEditingController controller =
-        TextEditingController(text: initialText);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextFormField(
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
-            controller: controller,
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(Messages.cancelTitle)),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (controller.text.isNotEmpty) {
-                        Navigator.of(context).pop(controller.text);
-                      }
-                    },
-                    child: Text(Messages.addTitle),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 128),
-        ],
       ),
     );
   }
